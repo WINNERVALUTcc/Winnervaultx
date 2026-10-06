@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=66fa176d-6297-46ca-b529-c62a5c6adf03
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WINNER VAULT</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#030a06;
+  --card:rgba(6,22,12,.92);
+  --green:#00ff66;
+  --green2:#00c853;
+  --mint:#7dffb3;
+  --gold:#ffc107;
+  --red:#ff3b3b;
+  --muted:#6b9b7a;
+  --border:rgba(0,255,102,.28);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{width:100%;min-height:100%;background:var(--bg);color:#fff;font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+body.modal-open{overflow:hidden;position:fixed;width:100%}
+
+.grid{
+  position:fixed;inset:-50%;width:200%;height:200%;
+  background-image:linear-gradient(rgba(0,255,102,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,102,.05) 1px,transparent 1px);
+  background-size:36px 36px;transform:perspective(500px) rotateX(60deg);
+  animation:grid 18s linear infinite;z-index:0;pointer-events:none
+}
+@keyframes grid{to{transform:perspective(500px) rotateX(60deg) translateY(36px)}}
+.glow{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.g1{top:-120px;left:-100px;background:rgba(0,255,102,.18)}
+.g2{bottom:-150px;right:-100px;background:rgba(0,200,80,.12)}
+
+#sec{
+  position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;flex-direction:column
+}
+.sec-box{
+  width:min(340px,90vw);background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:36px 28px;text-align:center;position:relative;
+  box-shadow:0 0 50px rgba(0,255,102,.15)
+}
+.sec-box:before{
+  content:'';position:absolute;top:0;left:30px;right:30px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent)
+}
+.shield{
+  width:72px;height:72px;margin:0 auto 18px;border:2px solid var(--green);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 25px rgba(0,255,102,.4);animation:pulse 2s infinite
+}
+@keyframes pulse{50%{box-shadow:0 0 40px rgba(0,255,102,.7)}}
+.shield i{font-size:30px;color:var(--green)}
+.sec-title{font-family:Orbitron,sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:6px}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:22px}
+.bar-wrap{margin-bottom:14px}
+.bar-top{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px}
+.bar{height:5px;background:rgba(0,255,102,.12);border-radius:10px;overflow:hidden}
+.bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:10px;box-shadow:0 0 10px var(--green);transition:width .25s}
+.sec-status{font-family:Orbitron,sans-serif;font-size:11px;color:var(--green);letter-spacing:1px;min-height:16px}
+
+#app{display:none;position:relative;z-index:2;padding:14px;max-width:460px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 0 18px}
+.logo{font-family:Orbitron,sans-serif;font-weight:900;font-size:21px;letter-spacing:2px;text-shadow:0 0 14px rgba(0,255,102,.7)}
+.logo span{color:var(--green)}
+.avatar{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:rgba(0,255,102,.08);display:flex;align-items:center;justify-content:center;color:var(--green);font-size:15px}
+
+.panel{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:14px;margin-bottom:18px;backdrop-filter:blur(10px)
+}
+.panel-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.uid{font-family:Orbitron,sans-serif;font-size:11px;color:var(--green);background:rgba(0,255,102,.12);border:1px solid var(--green);padding:3px 10px;border-radius:20px}
+.secure{font-size:11px;color:var(--mint);display:flex;align-items:center;gap:5px}
+.node{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:12px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:rgba(0,255,102,.06);border:1px solid rgba(0,255,102,.18);border-radius:12px;padding:10px;text-align:center}
+.stat-l{font-size:10px;color:var(--muted);letter-spacing:.5px}
+.stat-v{font-family:Orbitron,sans-serif;font-size:17px;color:var(--green);font-weight:700}
+
+.sec-head{
+  font-family:Orbitron,sans-serif;font-size:12px;letter-spacing:1.5px;color:var(--mint);
+  margin:20px 0 12px;display:flex;align-items:center;gap:8px
+}
+.sec-head:before{content:'';width:3px;height:14px;background:var(--green);border-radius:2px;box-shadow:0 0 8px var(--green)}
+
+.tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
+.tab{
+  flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;
+  background:rgba(0,255,102,.07);border:1px solid rgba(0,255,102,.2);color:var(--muted);cursor:pointer
+}
+.tab.on{background:rgba(0,255,102,.18);border-color:var(--green);color:var(--green);box-shadow:0 0 12px rgba(0,255,102,.25)}
+
+.cards{display:flex;flex-direction:column;gap:14px;padding-bottom:40px}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;
+  position:relative;overflow:hidden
+}
+.card:before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent)
+}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.ctype{font-size:11px;color:var(--muted);letter-spacing:.5px}
+.cbrand{font-family:Orbitron,sans-serif;font-size:13px;font-weight:700;color:var(--green)}
+.stock{font-size:10px;font-weight:700;color:var(--gold);background:rgba(255,193,7,.12);border:1px solid var(--gold);padding:3px 9px;border-radius:12px}
+.cnum{font-family:Orbitron,sans-serif;font-size:17px;letter-spacing:1.5px;margin:8px 0 10px;text-shadow:0 0 8px rgba(0,255,102,.25)}
+.cdet{display:flex;justify-content:space-between;margin-bottom:10px;font-size:12px}
+.cdet .l{font-size:10px;color:var(--muted)}
+.cdet .v{font-weight:600}
+.cbank{font-size:12px;color:var(--mint);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.bal{font-family:Orbitron,sans-serif;font-size:18px;color:var(--green);font-weight:700;margin-bottom:12px;text-shadow:0 0 12px rgba(0,255,102,.4)}
+.buy{
+  width:100%;padding:12px;border:none;border-radius:11px;cursor:pointer;
+  font-family:Orbitron,sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;
+  background:linear-gradient(135deg,var(--green),var(--green2));color:#000;
+  box-shadow:0 0 18px rgba(0,255,102,.35)
+}
+.buy:active{transform:scale(.97)}
+
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);
+  z-index:1000;display:none;align-items:center;justify-content:center;padding:18px
+}
+.overlay.show{display:flex}
+.mbox{
+  width:min(340px,100%);background:#04140a;border:1px solid var(--green);
+  border-radius:18px;padding:22px;text-align:center;position:relative;
+  box-shadow:0 0 40px rgba(0,255,102,.25);animation:in .28s ease
+}
+@keyframes in{from{opacity:0;transform:scale(.92) translateY(16px)}}
+.close{position:absolute;top:10px;right:14px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer}
+.mtitle{font-family:Orbitron,sans-serif;font-size:14px;color:var(--green);letter-spacing:1px;margin-bottom:4px}
+.mamt{font-family:Orbitron,sans-serif;font-size:26px;margin-bottom:6px;text-shadow:0 0 12px rgba(0,255,102,.4)}
+.mupi{background:rgba(0,255,102,.1);border:1px solid var(--border);border-radius:9px;padding:9px;font-size:13px;color:var(--mint);margin-bottom:14px;word-break:break-all}
+.qrbox{background:#fff;border-radius:14px;padding:10px;width:210px;margin:0 auto 12px;box-shadow:0 0 22px rgba(0,255,102,.25)}
+.qrbox img{width:100%;display:block;border-radius:8px}
+.mnote{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.45}
+.btn-row{display:flex;flex-direction:column;gap:9px}
+.btn{
+  width:100%;padding:11px;border-radius:10px;font-family:Orbitron,sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;border:none
+}
+.btn-copy{background:rgba(0,255,102,.14);border:1px solid var(--green)!important;color:var(--green)}
+.btn-check{background:linear-gradient(135deg,var(--green),var(--green2));color:#000}
+.btn-check:disabled{opacity:.6;cursor:not-allowed}
+
+.result{display:none;margin-top:12px;padding:12px;border-radius:10px;font-size:13px;font-weight:600;line-height:1.45}
+.result.fail{display:block;background:rgba(255,59,59,.12);border:1px solid var(--red);color:#ff6b6b}
+.result.loading{display:block;background:rgba(0,255,102,.08);border:1px solid var(--border);color:var(--mint)}
+
+.hidden{display:none!important}
+
+.warn-box{
+  background:rgba(255,193,7,.15);
+  border:1px solid var(--gold);
+  border-radius:8px;
+  padding:8px 10px;
+  margin:10px 0 12px;
+  font-size:11px;
+  font-weight:700;
+  color:var(--gold);
+  text-align:center;
+  letter-spacing:.3px;
+  line-height:1.3;
+}
+.mnote-red{
+  font-size:11px;
+  color:#ff3b3b;
+  font-weight:700;
+  margin-bottom:12px;
+  line-height:1.4;
+  text-align:center;
+  padding:0 4px;
+}
+</style>
+</head>
+<body>
+
+<div id="sec">
+  <div class="grid"></div>
+  <div class="glow g1"></div>
+  <div class="glow g2"></div>
+  <div class="sec-box">
+    <div class="shield"><i class="fas fa-shield-halved"></i></div>
+    <div class="sec-title">SECURITY VERIFICATION</div>
+    <div class="sec-sub">Establishing encrypted quantum connection...</div>
+    <div class="bar-wrap">
+      <div class="bar-top"><span>SYSTEM STATUS</span><span id="pct">0%</span></div>
+      <div class="bar"><div class="bar-fill" id="fill"></div></div>
+    </div>
+    <div class="sec-status" id="st">INITIALIZING...</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="grid"></div>
+  <div class="glow g1"></div>
+  <div class="glow g2"></div>
+
+  <header>
+    <div class="logo">WINNER <span>VAULT</span></div>
+    <div class="avatar"><i class="fas fa-user-secret"></i></div>
+  </header>
+
+  <div class="panel">
+    <div class="panel-top">
+      <div class="uid">UID-153466</div>
+      <div class="secure"><i class="fas fa-lock"></i> SECURE</div>
+    </div>
+    <div class="node"><span>NODE: GLOBAL-01</span><span>VERIFIED</span></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-l">TERMINAL USERS</div><div class="stat-v">165</div></div>
+      <div class="stat"><div class="stat-l">30D TRAFFIC</div><div class="stat-v">12.4K+</div></div>
+    </div>
+  </div>
+
+  <div class="sec-head">ACTIVE STOCK • DEBIT CARDS</div>
+
+  <div class="tabs">
+    <div class="tab on" data-f="ALL">ALL</div>
+    <div class="tab" data-f="VISA">VISA</div>
+    <div class="tab" data-f="MASTERCARD">MASTERCARD</div>
+    <div class="tab" data-f="RUPAY">RUPAY</div>
+  </div>
+
+  <div class="cards" id="list"></div>
+</div>
+
+<div class="overlay" id="modal">
+  <div class="mbox">
+    <button class="close" onclick="closeM()">&times;</button>
+    <div class="mtitle">COMPLETE PAYMENT</div>
+    <div class="mamt" id="amt">₹150</div>
+    <div class="mupi">UPI PE PAYMENT NA KRE reject ho jayga qr pe kre</div>
+    <div class="qrbox">
+      <img src=https://res.cloudinary.com/dihj6dmbb/image/upload/v1791288575/quickurl/qr_1791288562880.png alt="QR">
+    </div>
+    <div class="mnote">Pay with any UPI app<br>After payment click the button below</div>
+    <div class="mnote-red">NOTE :  AFTER PAYMENT, ALL CARD DETAILS WILL BE SHOWN ONCE THE PAYMENT HAS BEEN SUCCESSFULLY VERIFIED.</div>
+    <div class="btn-row">
+      <button class="btn btn-copy" onclick="copyUpi()">COPY UPI ID</button>
+      <button class="btn btn-check" id="chkBtn" onclick="checkPay()">CHECK PAYMENT</button>
+    </div>
+    <div class="result" id="res"></div>
+  </div>
+</div>
+
+<script>
+const indianNames = [
+  "SHIVAM KUMAR","ROHIT SHARMA","AMAN KUSHWAHA","AARAV MEHTA","VIVEK PATEL",
+  "DEEPAK MISHRA","RITIK RATHORE","ADITYA VERMA","SAMEER KHAN","ANIKET GUPTA",
+  "SUNIL YADAV","VIKAS TIWARI","RAHUL SINGH","PRIYA SHARMA","MOHIT VERMA",
+  "ARJUN REDDY","KARTIK JOSHI","NEHA AGARWAL","SURESH PATIL","POOJA DESAI",
+  "MANISH SHUKLA","KAVITA NAYAR","RAJESH IYER","ANJALI MENON","SACHIN RAO"
+];
+
+const americanNames = [
+  "JAMES WILSON","MICHAEL BROWN","ROBERT JOHNSON","WILLIAM DAVIS","DAVID MILLER",
+  "RICHARD GARCIA","JOSEPH MARTINEZ","THOMAS ANDERSON","CHARLES TAYLOR","CHRISTOPHER LEE",
+  "DANIEL WHITE","MATTHEW HARRIS","ANTHONY CLARK","MARK LEWIS","STEVEN WALKER",
+  "PAUL HALL","ANDREW YOUNG","JOSHUA KING","KENNETH WRIGHT","KEVIN LOPEZ",
+  "BRIAN HILL","GEORGE SCOTT","EDWARD GREEN","RONALD ADAMS","TIMOTHY BAKER"
+];
+
+const indianBanks = [
+  "HDFC PREMIUM","AXIS BURGUNDY","SBI ELITE","ICICI WEALTH","KOTAK PRIVILEGE",
+  "YES FIRST","PNB SELECT","INDUSIND LEGEND","BOB PREMIER","CANARA SELECT",
+  "UNION GOLD","IDBI ROYALE","FEDERAL PRIVILEGE","RBL SUPERSAVER","BANDHAN PRIVY"
+];
+
+const americanBanks = [
+  "CHASE SAPPHIRE","BANK OF AMERICA PREMIER","WELLS FARGO ACTIVE CASH","CITI PREFERRED",
+  "CAPITAL ONE VENTURE","US BANK ALTITUDE","PNC PREMIER","TD BANK BEYOND",
+  "TRUIST ENJOY","REGIONS PREMIUM","KEYBANK SMART","HUNTINGTON VOYAGE",
+  "FIFTH THIRD PREFERRED","CITIZENS PRIVATE","M&T BANK PREMIER"
+];
+
+const brands = ["VISA","MASTERCARD","RUPAY"];
+const prices = [150,199,249,299,349,399,449,499,549,599,699,799,899,949,999];
+
+function rnd(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function rndInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+function genCardNum(brand){
+  // Generate realistic looking masked numbers, keep same visual length style
+  const p1 = rndInt(4000,5999);
+  const p2 = rndInt(10,99);
+  const p4 = rndInt(1000,9999);
+  return `${p1} ${String(p2).padStart(2,'0')}•• •••• ${p4}`;
+}
+
+function genBalanceForIndex(i){
+  // Ascending balances with price: lowest price ~5k, highest ~20k
+  // Small random jitter only in ones/tens/hundreds so it feels real
+  const baseSteps = [5100,6200,7100,8300,9400,10500,11600,12800,13900,15100,16200,17400,18500,19300,20500];
+  const base = baseSteps[i] || 5000;
+  const jitter = rndInt(-80, 120); // ones + tens + small hundreds only
+  const total = Math.max(4800, base + jitter);
+  return "₹" + total.toLocaleString('en-IN');
+}
+
+function generateCards(){
+  const cards = [];
+  const usedNames = new Set();
+  const usedBanks = new Set();
+  
+  // 8 Indian + 7 American
+  const isIndianFlags = [true,true,true,true,true,true,true,true,false,false,false,false,false,false,false];
+  for(let i=isIndianFlags.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [isIndianFlags[i], isIndianFlags[j]] = [isIndianFlags[j], isIndianFlags[i]];
+  }
+
+  // prices already ascending: 150 → 999
+  // balances also ascending so cheap cards have lower balance, expensive have higher
+  for(let i=0; i<15; i++){
+    const isIndian = isIndianFlags[i];
+    let name, bank;
+    
+    if(isIndian){
+      do { name = rnd(indianNames); } while(usedNames.has(name));
+      do { bank = rnd(indianBanks); } while(usedBanks.has(bank));
+    } else {
+      do { name = rnd(americanNames); } while(usedNames.has(name));
+      do { bank = rnd(americanBanks); } while(usedBanks.has(bank));
+    }
+    usedNames.add(name);
+    usedBanks.add(bank);
+
+    const brand = brands[i % 3];
+    cards.push({
+      n: genCardNum(brand),
+      h: name,
+      b: brand,
+      bank: bank,
+      bal: genBalanceForIndex(i),
+      p: prices[i],
+      l: rndInt(2,9)
+    });
+  }
+  // DO NOT shuffle — keep price + balance ascending order
+  return cards;
+}
+
+let cards = generateCards();
+
+const msgs=["INITIALIZING...","SCANNING NODE...","ENCRYPTING CHANNEL...","AUTHORIZING ACCESS...","VERIFYING REGISTRY...","QUANTUM LINK STABLE","ACCESS GRANTED"];
+let p=0;
+const iv=setInterval(()=>{
+  p+=Math.random()*11+5;
+  if(p>=100){p=100;clearInterval(iv);setTimeout(()=>{
+    document.getElementById('sec').classList.add('hidden');
+    document.getElementById('app').style.display='block';
+  },500)}
+  document.getElementById('fill').style.width=p+'%';
+  document.getElementById('pct').textContent=Math.floor(p)+'%';
+  document.getElementById('st').textContent=msgs[Math.min(Math.floor(p/15),msgs.length-1)];
+},160);
+
+function render(f='ALL'){
+  const list=document.getElementById('list');
+  const data=f==='ALL'?cards:cards.filter(c=>c.b===f);
+  list.innerHTML=data.map(c=>`
+    <div class="card">
+      <div class="card-top">
+        <div>
+          <div class="ctype">DEBIT CARD • ${c.b}</div>
+          <div class="cbrand">${c.b}</div>
+        </div>
+        <div class="stock">ONLY ${c.l} LEFT</div>
+      </div>
+      <div class="cnum">${c.n}</div>
+      <div class="cdet">
+        <div><div class="l">HOLDER</div><div class="v">${c.h}</div></div>
+      </div>
+      <div class="cbank"><i class="fas fa-university"></i> ${c.bank}</div>
+      <div class="bal">BAL: ${c.bal}</div>
+      <div class="warn-box">ALL CARDS DETAILS WILL BE SHOWN AFTER PAYMENT</div>
+      <button class="buy" onclick="openM(${c.p})">BUY NOW • ₹${c.p}</button>
+    </div>
+  `).join('');
+}
+render();
+
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    render(t.dataset.f);
+  }
+});
+
+function openM(price){
+  document.getElementById('amt').textContent='₹'+price;
+  document.getElementById('res').className='result';
+  document.getElementById('res').textContent='';
+  document.getElementById('chkBtn').disabled=false;
+  document.getElementById('chkBtn').textContent='CHECK PAYMENT';
+  document.getElementById('modal').classList.add('show');
+  document.body.classList.add('modal-open');
+}
+function closeM(){
+  document.getElementById('modal').classList.remove('show');
+  document.body.classList.remove('modal-open');
+}
+document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closeM()};
+
+function copyUpi(){
+  navigator.clipboard.writeText('upi abhi available nhi h').then(()=>{
+    const b=document.querySelector('.btn-copy');
+    b.textContent='COPIED ✓';
+    setTimeout(()=>b.textContent='COPY UPI ID',1400);
+  });
+}
+
+function checkPay(){
+  const btn=document.getElementById('chkBtn');
+  const res=document.getElementById('res');
+  btn.disabled=true;
+  btn.textContent='CHECKING...';
+  res.className='result loading';
+  res.textContent='Verifying payment with gateway...';
+  setTimeout(()=>{
+    res.className='result fail';
+    res.innerHTML='PAYMENT NOT RECEIVED<br><small style="opacity:.9">payment nahi aaya, kripya karke real payment karein</small>';
+    btn.disabled=false;
+    btn.textContent='CHECK PAYMENT';
+  },2200);
+}
+</script>
+</body>
+</html><script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="66fa176d-6297-46ca-b529-c62a5c6adf03" data-app-host="app.netlify.com"></script>
